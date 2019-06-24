@@ -2,6 +2,7 @@ package com.gabi.backend.bikeparkend.service.implementation;
 
 import com.gabi.backend.bikeparkend.controller.requests.BikeparkReservationRequest;
 import com.gabi.backend.bikeparkend.controller.requests.ConcursReservationRequest;
+import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
 import com.gabi.backend.bikeparkend.exceptions.RecommendationException;
@@ -460,22 +461,46 @@ public class GenericServiceImpl implements GenericService {
 
     @Override
     public BikePark getBikeparkById(Long id) throws NotValidBikeparkException {
-        Optional<BikePark> bikePark = bikeParkRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            if (user.get().getBikePark() != null)
+                return user.get().getBikePark();
+        }
+        throw new NotValidBikeparkException("No bikepark with this user ID!");
+        /*Optional<BikePark> bikePark = bikeParkRepository.findById(id);
         if (bikePark.isPresent()) {
             System.out.println(bikePark.get().toString());
             return bikePark.get();
         }
-        throw new NotValidBikeparkException("No company with this user ID!");
+        throw new NotValidBikeparkException("No company with this user ID!");*/
     }
 
     @Override
-    public Biker getBikerById(Long id) throws NotValidBikerException {
-        Optional<Biker> biker = bikerRepository.findById(id);
+    public Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+
+            if (!checkTheUser(user.get())) {
+                throw new NotAllowedBikerException("You don't have permissions to remove this data!");
+            }
+
+            if (user.get().getBiker() != null)
+                return user.get().getBiker();
+        }
+        throw new NotValidBikerException("No biker with this user ID!");
+        /*Optional<Biker> biker = bikerRepository.findById(id);
         if (biker.isPresent()) {
             System.out.println(biker.get().toString());
             return biker.get();
         }
-        throw new NotValidBikerException("No company with this user ID!");
+        throw new NotValidBikerException("No company with this user ID!");*/
+    }
+
+    private boolean checkTheUser(User user) {
+        User authenticatedUser = getAuthenticatedUser();
+        if (user != null && authenticatedUser != null)
+            return authenticatedUser.getId() == user.getId();
+        return false;
     }
 
     private void updateFirstNameBiker(Biker currentApplicant, Biker applicant) {

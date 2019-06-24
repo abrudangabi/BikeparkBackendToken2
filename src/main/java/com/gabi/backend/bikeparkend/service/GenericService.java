@@ -2,6 +2,7 @@ package com.gabi.backend.bikeparkend.service;
 
 import com.gabi.backend.bikeparkend.controller.requests.BikeparkReservationRequest;
 import com.gabi.backend.bikeparkend.controller.requests.ConcursReservationRequest;
+import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
 import com.gabi.backend.bikeparkend.model.*;
@@ -42,7 +43,7 @@ public interface GenericService {
 
     BikePark getBikeparkById(Long id) throws NotValidBikeparkException;
 
-    Biker getBikerById(Long id) throws NotValidBikerException;
+    Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException;
 
     Biker updateApplicant(Long id, Biker applicant);
 
