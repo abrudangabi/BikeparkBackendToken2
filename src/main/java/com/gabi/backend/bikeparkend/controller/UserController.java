@@ -1,5 +1,6 @@
 package com.gabi.backend.bikeparkend.controller;
 
+import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
 import com.gabi.backend.bikeparkend.model.BikePark;
@@ -42,7 +43,7 @@ public class UserController {
     }
     @PreAuthorize("hasAuthority('BIKER')")
     @GetMapping("/user/biker/{id}")
-    public ResponseEntity getAuthenticatedBiker(@PathVariable Long id) throws NotValidBikerException/*throws NotValidApplicantException, NotAllowedApplicantException*/ {
+    public ResponseEntity getAuthenticatedBiker(@PathVariable Long id) throws NotValidBikerException, NotAllowedBikerException {
         /*Biker applicant = genericService.getApplicantByUserId(id);
         return new ResponseEntity(applicant, HttpStatus.OK);*/
         System.out.println("Vrea Biker id "+id);
@@ -60,11 +61,11 @@ public class UserController {
     ResponseEntity handleNotValidBikerException(NotValidBikerException exception) {
         return new ResponseEntity(exception,HttpStatus.CONFLICT);
     }
-    /*@ExceptionHandler(NotAllowedApplicantException.class)
+    @ExceptionHandler(NotAllowedBikerException.class)
     public @ResponseBody
-    ResponseEntity handleNotAllowedBikerxception(NotValidApplicantException exception){
+    ResponseEntity handleNotAllowedBikerxception(NotAllowedBikerException exception){
         return new ResponseEntity(exception, HttpStatus.CONFLICT);
-    }*/
+    }
 
 
 }
