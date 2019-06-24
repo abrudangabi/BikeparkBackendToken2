@@ -40,7 +40,7 @@ public class UserController {
         //BikePark bikePark = genericService.getBikeparkById((long)1);
         return new ResponseEntity(bikePark, HttpStatus.OK);
     }
-    //@PreAuthorize("hasAuthority('APPLICANT')")
+    @PreAuthorize("hasAuthority('BIKER')")
     @GetMapping("/user/biker/{id}")
     public ResponseEntity getAuthenticatedBiker(@PathVariable Long id) throws NotValidBikerException/*throws NotValidApplicantException, NotAllowedApplicantException*/ {
         /*Biker applicant = genericService.getApplicantByUserId(id);
@@ -50,19 +50,19 @@ public class UserController {
         return new ResponseEntity(biker,HttpStatus.OK);
     }
 
-    //@ExceptionHandler(NotValidCompanyException.class)
+    @ExceptionHandler(NotValidBikeparkException.class)
     public @ResponseBody
     ResponseEntity handleNotValidBikeparkException(NotValidBikeparkException exception) {
         return new ResponseEntity(exception, HttpStatus.CONFLICT);
     }
-    //@ExceptionHandler(NotValidApplicantException.class)
-    /*public @ResponseBody
-    ResponseEntity handleNotValidApplicantException(NotValidApplicantException exception) {
+    @ExceptionHandler(NotValidBikerException.class)
+    public @ResponseBody
+    ResponseEntity handleNotValidBikerException(NotValidBikerException exception) {
         return new ResponseEntity(exception,HttpStatus.CONFLICT);
     }
-    //@ExceptionHandler(NotAllowedApplicantException.class)
+    /*@ExceptionHandler(NotAllowedApplicantException.class)
     public @ResponseBody
-    ResponseEntity handleNotAllowedApplicantException(NotValidApplicantException exception){
+    ResponseEntity handleNotAllowedBikerxception(NotValidApplicantException exception){
         return new ResponseEntity(exception, HttpStatus.CONFLICT);
     }*/
 
