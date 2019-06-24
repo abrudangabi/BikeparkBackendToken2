@@ -113,7 +113,7 @@ public class GenericServiceImpl implements GenericService {
         initRoles();
         initDatabase();
         //initParole();
-        generare();
+        //generare();
         System.out.println("A salvat in bd");
     }
 
