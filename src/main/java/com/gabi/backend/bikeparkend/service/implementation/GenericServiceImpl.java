@@ -112,7 +112,7 @@ public class GenericServiceImpl implements GenericService {
     private void loadData() {
         initRoles();
         initDatabase();
-        //initParole();
+        initParole();
         //generare();
         System.out.println("A salvat in bd");
     }
@@ -322,13 +322,13 @@ public class GenericServiceImpl implements GenericService {
             }
         }
 
-        /*for(User u : users){
-            if(u.getId()>=(long)138 && u.getId()<=300){
+        for(User u : users){
+            if(u.getId()>=(long)1 && u.getId()<=100){
                 String parolaCodata = u.getUsername();
                 u.setPassword(SecurityConfig.passwordEncoder().encode(parolaCodata));
                 userRepository.save(u);
             }
-        }*/
+        }
 
         /*for(User u : users){
             Optional<User> applicantOptional = userRepository.findById(u.getId());
