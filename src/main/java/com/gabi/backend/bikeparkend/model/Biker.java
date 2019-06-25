@@ -201,6 +201,11 @@ public class Biker implements Serializable {
         rezervareConcurs.setBiker(this);
     }
 
+    public void addRezervareConcurs(RezervareConcurs rezervareConcurs) {
+        this.rezervareConcurs.add(rezervareConcurs);
+        rezervareConcurs.setBiker(this);
+    }
+
     public Set<Preferinte> getPreferinte() {
         return preferinte;
     }

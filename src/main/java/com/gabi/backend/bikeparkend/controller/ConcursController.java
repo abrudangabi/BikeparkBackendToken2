@@ -2,12 +2,17 @@ package com.gabi.backend.bikeparkend.controller;
 
 import com.gabi.backend.bikeparkend.controller.requests.CreateCategorieConcurs;
 import com.gabi.backend.bikeparkend.controller.requests.CreateRezervareConcurs;
+import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
+import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
+import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
+import com.gabi.backend.bikeparkend.exceptions.NotValidCategorieException;
 import com.gabi.backend.bikeparkend.model.*;
 import com.gabi.backend.bikeparkend.service.GenericService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +33,7 @@ public class ConcursController {
     //    }
     @GetMapping("{id}/categorii")
     public @ResponseBody
-    ResponseEntity getAllCategoriiByConcurs(@PathVariable Long id) {
+    ResponseEntity getAllCategoriiByConcurs(@PathVariable Long id) throws NotValidCategorieException {
         System.out.println("Vine in all categorii by concurs");
         List<Categorie> categories = userService.getCategoriiByConcurs(id);
         System.out.println("Mai merge ?");
@@ -54,9 +59,9 @@ public class ConcursController {
         return new ResponseEntity(photo, HttpStatus.OK);
         //return new ResponseEntity(userService.getAllBikeParks(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('BIKER')")
     @PostMapping("/rezervareconcurs/rezerva")
-    public @ResponseBody ResponseEntity addRezervareConcurs(@RequestBody CreateRezervareConcurs createRezervareConcurs){
+    public @ResponseBody ResponseEntity addRezervareConcurs(@RequestBody CreateRezervareConcurs createRezervareConcurs) throws NotAllowedBikerException, NotValidBikerException {
         RezervareConcurs rezervareConcurs =
                 userService.createRezervareConcurs(
                         createRezervareConcurs.getConcurs(),
@@ -68,6 +73,13 @@ public class ConcursController {
         /*System.out.println("Se face rezervarea");
         System.out.println(rezervareConcurs.toString());
         return new ResponseEntity(userService.rezervaConcurs(rezervareConcurs), HttpStatus.OK);*/
+    }
+
+    @PutMapping("/edit/{id}")
+    public @ResponseBody
+    ResponseEntity updateConcurs(@PathVariable Long id, @RequestBody Concurs concurs) {
+        System.out.println("Face edit in Concurs");
+        return new ResponseEntity(userService.updateConcurs(id,concurs), HttpStatus.OK);
     }
 
     @PostMapping("/categorie/add")

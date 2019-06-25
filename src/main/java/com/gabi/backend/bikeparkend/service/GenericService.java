@@ -5,6 +5,7 @@ import com.gabi.backend.bikeparkend.controller.requests.ConcursReservationReques
 import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
+import com.gabi.backend.bikeparkend.exceptions.NotValidCategorieException;
 import com.gabi.backend.bikeparkend.model.*;
 
 import java.util.List;
@@ -45,6 +46,10 @@ public interface GenericService {
 
     Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException;
 
+    Biker getBikerByUserId(Long id) throws NotValidBikerException, NotAllowedBikerException;
+
+    BikePark getBikeparkByUserId(Long id) throws NotValidBikeparkException;
+
     Biker updateApplicant(Long id, Biker applicant);
 
     Biker registerBiker(User user, Biker biker);
@@ -69,7 +74,7 @@ public interface GenericService {
 
     Role addRole(Role role);
 
-    List<Categorie> getCategoriiByConcurs(Long idConcurs);
+    List<Categorie> getCategoriiByConcurs(Long idConcurs) throws NotValidCategorieException;
 
     BikePark getBikeparkByConcurs(Long idConcurs);
 
@@ -87,7 +92,7 @@ public interface GenericService {
 
     RezervareConcurs deleteRezervareConcurs(Long id);
 
-    RezervareConcurs createRezervareConcurs(Concurs concurs, RezervareConcurs rezervareConcurs);
+    RezervareConcurs createRezervareConcurs(Concurs concurs, RezervareConcurs rezervareConcurs) throws NotValidBikerException, NotAllowedBikerException;
 
     Categorie createCategorie(Concurs concurs, Categorie categorie);
 
@@ -100,6 +105,8 @@ public interface GenericService {
     BikePark updateBikepark(Long id, BikePark bikePark) throws NotValidBikeparkException;
 
     Contact updateBikeparkContact(Long id, Contact contact);
+
+    Concurs updateConcurs(Long id, Concurs concurs);
 
     List<Traseu> findTraseeByBikeparkId(Long id);
 

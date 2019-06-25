@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @SuppressWarnings("unchecked")
@@ -34,7 +35,7 @@ public class BikerController {
     }
 
     //TODO BY BIKEPARK
-    //@PreAuthorize("hasAuthority('APPLICANT')")
+    @PreAuthorize("hasAuthority('BIKER')")
     @GetMapping("/rezervariByBiker/{id}")
     public @ResponseBody
     ResponseEntity getRezervariBikeparkByBiker(@PathVariable Long id) throws NotValidBikerException {
@@ -42,7 +43,7 @@ public class BikerController {
         return new ResponseEntity(userService.getAllRezervariBikeparkByBiker(id), HttpStatus.OK);
     }
 
-    //@PreAuthorize("hasAuthority('APPLICANT')")
+    @PreAuthorize("hasAuthority('BIKER')")
     @GetMapping("/inscrieriByBiker/{id}")
     public @ResponseBody
     ResponseEntity getRezervariConcursByBiker(@PathVariable Long id) throws NotValidBikerException {

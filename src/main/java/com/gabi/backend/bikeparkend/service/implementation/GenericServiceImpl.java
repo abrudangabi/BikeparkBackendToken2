@@ -2,10 +2,7 @@ package com.gabi.backend.bikeparkend.service.implementation;
 
 import com.gabi.backend.bikeparkend.controller.requests.BikeparkReservationRequest;
 import com.gabi.backend.bikeparkend.controller.requests.ConcursReservationRequest;
-import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
-import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
-import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
-import com.gabi.backend.bikeparkend.exceptions.RecommendationException;
+import com.gabi.backend.bikeparkend.exceptions.*;
 import com.gabi.backend.bikeparkend.model.*;
 import com.gabi.backend.bikeparkend.repository.*;
 import com.gabi.backend.bikeparkend.repository.BikerRepository;
@@ -113,7 +110,8 @@ public class GenericServiceImpl implements GenericService {
     private void loadData() {
         initRoles();
         initDatabase();
-       initParole();
+       //TODO initParole();
+        initParole();
         //generare();
         System.out.println("A salvat in bd");
     }
@@ -460,23 +458,27 @@ public class GenericServiceImpl implements GenericService {
     }
 
     @Override
-    public BikePark getBikeparkById(Long id) throws NotValidBikeparkException {
+    public BikePark getBikeparkByUserId(Long id) throws NotValidBikeparkException {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             if (user.get().getBikePark() != null)
                 return user.get().getBikePark();
         }
         throw new NotValidBikeparkException("No bikepark with this user ID!");
-        /*Optional<BikePark> bikePark = bikeParkRepository.findById(id);
+    }
+
+    @Override
+    public BikePark getBikeparkById(Long id) throws NotValidBikeparkException {
+        Optional<BikePark> bikePark = bikeParkRepository.findById(id);
         if (bikePark.isPresent()) {
             System.out.println(bikePark.get().toString());
             return bikePark.get();
         }
-        throw new NotValidBikeparkException("No company with this user ID!");*/
+        throw new NotValidBikeparkException("No bikepark with this user ID!");
     }
 
     @Override
-    public Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException {
+    public Biker getBikerByUserId(Long id) throws NotValidBikerException, NotAllowedBikerException {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
 
@@ -488,12 +490,16 @@ public class GenericServiceImpl implements GenericService {
                 return user.get().getBiker();
         }
         throw new NotValidBikerException("No biker with this user ID!");
-        /*Optional<Biker> biker = bikerRepository.findById(id);
+    }
+
+    @Override
+    public Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException {
+        Optional<Biker> biker = bikerRepository.findById(id);
         if (biker.isPresent()) {
             System.out.println(biker.get().toString());
             return biker.get();
         }
-        throw new NotValidBikerException("No company with this user ID!");*/
+        throw new NotValidBikerException("No company with this user ID!");
     }
 
     private boolean checkTheUser(User user) {
@@ -535,6 +541,15 @@ public class GenericServiceImpl implements GenericService {
             currentContact.getLocatie().setStrada(contact.getLocatie().getStrada());
         if (contact.getLocatie().getNumber() != null && !currentContact.getLocatie().getNumber().equals(contact.getLocatie().getNumber()))
             currentContact.getLocatie().setNumber(contact.getLocatie().getNumber());
+    }
+
+    private void updateConcursFields(Concurs currentConcurs, Concurs concurs){
+        if (concurs.getDenumire() != null && !currentConcurs.getDenumire().equals(concurs.getDenumire()))
+            currentConcurs.setDenumire(concurs.getDenumire());
+        if (concurs.getDataStart() != null && !currentConcurs.getDataStart().equals(concurs.getDataStart()))
+            currentConcurs.setDataStart(concurs.getDataStart());
+        if (concurs.getMinimParticipanti() != null && !currentConcurs.getMinimParticipanti().equals(concurs.getMinimParticipanti()))
+            currentConcurs.setMinimParticipanti(concurs.getMinimParticipanti());
     }
 
     private Biker findApplicantById(Long id) {
@@ -711,10 +726,10 @@ public class GenericServiceImpl implements GenericService {
     }
 
     @Override
-    public List<Categorie> getCategoriiByConcurs(Long idConcurs){
+    public List<Categorie> getCategoriiByConcurs(Long idConcurs) throws NotValidCategorieException {
         Optional<List<Categorie>> categoriesOptional = categorieRepository.findAllByConcurs_Id(idConcurs);
         if (!categoriesOptional.isPresent()) {
-            //throw new NotValidApplicantException("Applicant with ID:" + id + " doesn't exist!");
+            throw new NotValidCategorieException("Concurs with ID:" + idConcurs + " doesn't have categorie!");
         }
         List<Categorie> categories = categoriesOptional.get();
         return categories;
@@ -910,10 +925,29 @@ public class GenericServiceImpl implements GenericService {
         return concurs.get();
     }
 
-    @Override
-    public RezervareConcurs createRezervareConcurs(Concurs concurs, RezervareConcurs rezervareConcurs) {
-        Concurs actualConcurs = findConcursById(concurs.getId());
+    private RezervareConcurs findRezervareConcurstByBikerAndConcurs(Biker biker, Concurs concurs) {
+        Optional<RezervareConcurs> rezervareConcursOptional = rezervareConcursRepository.findRezervareConcursByBikerAndConcurs(biker, concurs);
+        if (!rezervareConcursOptional.isPresent())
+            return null;
+        return rezervareConcursOptional.get();
+    }
 
+    @Override
+    public RezervareConcurs createRezervareConcurs(Concurs concurs, RezervareConcurs rezervareConcurs) throws NotValidBikerException, NotAllowedBikerException {
+
+        Concurs actualConcurs = findConcursById(concurs.getId());
+        //TODO BIKER
+        //Biker actualBiker = findBikerById((long)20);
+        User user = getAuthenticatedUser();
+        System.out.println(user.getId() + " user rezervare concurs");
+
+        Biker actualBiker = user.getBiker();
+        System.out.println(actualBiker.getId() + " biker rezervare concurs");
+
+        if (findRezervareConcurstByBikerAndConcurs(actualBiker, actualConcurs) != null)
+            throw new NotAllowedBikerException("You can't apply again for this concurs!");
+
+        actualBiker.addRezervareConcurs(rezervareConcurs);
         actualConcurs.addRezervareConcurs(rezervareConcurs);
         return rezervareConcursRepository.saveAndFlush(rezervareConcurs);
 
@@ -934,6 +968,8 @@ public class GenericServiceImpl implements GenericService {
         BikePark actualBikepark = findBikeparkById(bikePark.getId());
 
         //traseu.setDificultate(Dificultate.usor);
+        long idNou = traseuRepository.findAll().size() + 1;
+        traseu.setId(idNou);
         actualBikepark.addTraseu(traseu);
         return traseuRepository.saveAndFlush(traseu);
 
@@ -973,7 +1009,7 @@ public class GenericServiceImpl implements GenericService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findByRoleStringEquals(RoleString.BIKER));
         user.setRoles(roles);
-        //user.setPassword(SecurityConfig.passwordEncoder().encode(user.getPassword()));
+        user.setPassword(SecurityConfig.passwordEncoder().encode(user.getPassword()));
         User userResult = userRepository.save(user);
         userResult.setBiker(biker);
         Biker currentBiker = bikerRepository.saveAndFlush(biker);
@@ -1000,7 +1036,7 @@ public class GenericServiceImpl implements GenericService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findByRoleStringEquals(RoleString.BIKEPARK));
         user.setRoles(roles);
-        //user.setPassword(SecurityConfig.passwordEncoder().encode(user.getPassword()));
+        user.setPassword(SecurityConfig.passwordEncoder().encode(user.getPassword()));
         User userResult = userRepository.save(user);
         userResult.setBikePark(bikePark);
         BikePark currentBikepark = bikeParkRepository.saveAndFlush(bikePark);
@@ -1160,6 +1196,16 @@ public class GenericServiceImpl implements GenericService {
         updateBikeparkContactFields(currentContact, contact);
 
         return contactRepository.save(currentContact);
+    }
+
+    @Override
+    public Concurs updateConcurs(Long id, Concurs concurs) {
+
+        Concurs currentConcurs = findConcursById(id);
+
+        updateConcursFields(currentConcurs, concurs);
+
+        return concursRepository.save(currentConcurs);
     }
 
     @Override
