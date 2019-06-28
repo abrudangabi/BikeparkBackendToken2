@@ -10,8 +10,10 @@ import java.io.Serializable;
 @Table(name = "traseu")
 public class Traseu implements Serializable {
 
-    @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "traseu_id")
     private Long id;
 

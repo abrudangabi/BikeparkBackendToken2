@@ -25,8 +25,8 @@ public class Categorie implements Serializable {
     @Enumerated(EnumType.STRING)
     private Dificultate dificultate;
 
-    @Enumerated(EnumType.STRING)
-    private Varsta varsta;
+    //@Enumerated(EnumType.STRING)
+    private String varsta;
 
     private Long lungime;
 
@@ -62,11 +62,11 @@ public class Categorie implements Serializable {
         this.dificultate = dificultate;
     }
 
-    public Varsta getVarsta() {
+    public String getVarsta() {
         return varsta;
     }
 
-    public void setVarsta(Varsta varsta) {
+    public void setVarsta(String varsta) {
         this.varsta = varsta;
     }
 

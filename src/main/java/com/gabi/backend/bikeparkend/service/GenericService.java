@@ -42,6 +42,10 @@ public interface GenericService {
 
     List<RezervareConcurs> getAllRezervariConcursByBiker(Long id) throws NotValidBikerException;
 
+    BikePark getBikeparkByIdRezervare(Long id);
+
+    Concurs getConcursByIdInscriere(Long id);
+
     BikePark getBikeparkById(Long id) throws NotValidBikeparkException;
 
     Biker getBikerById(Long id) throws NotValidBikerException, NotAllowedBikerException;

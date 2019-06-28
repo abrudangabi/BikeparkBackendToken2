@@ -104,6 +104,12 @@ public class BikeParkController {
         return new ResponseEntity(userService.updateApplicant(id,applicant), HttpStatus.OK);
     }
 
+    @GetMapping("/rezervare/{id}")
+    ResponseEntity getBikeparkByIdRezervare(@PathVariable Long id) {
+        System.out.println("getBikeparkByIdRezervare : " + id);
+        return new ResponseEntity(userService.getBikeparkByIdRezervare(id), HttpStatus.OK);
+    }
+
     @PostMapping("/rezervarebikepark/rezerva")
     public @ResponseBody ResponseEntity addRezervareBikepark(@RequestBody CreateRezervareBikepark createRezervareBikepark) throws NotValidBikeparkException, NotValidBikerException{
         System.out.println(createRezervareBikepark.getRezervareBikePark().getZiua());

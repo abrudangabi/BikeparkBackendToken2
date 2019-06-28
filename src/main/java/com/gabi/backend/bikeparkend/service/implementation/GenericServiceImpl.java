@@ -111,7 +111,6 @@ public class GenericServiceImpl implements GenericService {
         initRoles();
         initDatabase();
        //TODO initParole();
-        initParole();
         //generare();
         System.out.println("A salvat in bd");
     }
@@ -602,8 +601,8 @@ public class GenericServiceImpl implements GenericService {
     @Override
     public List<BikeparkReservationRequest> getAllRezervariBikeparkForBiker() {
         // TODO TOKEN
-        //User user = getAuthenticatedUser();
-        User user = new User();
+        User user = getAuthenticatedUser();
+        //User user = new User();
         Biker biker = user.getBiker();
 
         Set<RezervareBikePark> allRezervariBikepark = biker.getRezervareBikeParks();
@@ -618,29 +617,85 @@ public class GenericServiceImpl implements GenericService {
             }
         });
         List<BikeparkReservationRequest> requests = new ArrayList<>();
-        Long i = (long)0;
+        /*Long i = (long)0;
         for(RezervareBikePark r : sortedList){
             BikeparkReservationRequest req = new BikeparkReservationRequest(
                     i,biker,r
             );
             requests.add(req);
-        }
+        }*/
         return requests;
     }
 
-    @Override
+    /*@Override
     public List<RezervareBikePark> getAllRezervariBikeparkByBiker(Long id) throws NotValidBikerException {
         // TODO TOKEN
         //User user = getAuthenticatedUser();
-        /*User user = new User();
-        Biker biker = user.getBiker();*/
+        *//*User user = new User();
+        Biker biker = user.getBiker();*//*
+
+        Biker biker = findBikerById(id);
+        //BikePark bikePark = findBikeparkById(id);
+
+        Set<RezervareBikePark> allRezervariBikepark = biker.getRezervareBikeParks();
+        List<RezervareBikePark> sortedList = new ArrayList<>(allRezervariBikepark);
+
+        List<BikeparkReservationRequest> requests = new ArrayList<>();
+        Long i = (long)1;
+        for(RezervareBikePark r : sortedList){
+            BikePark bikePark = r.getBikePark();
+            BikeparkReservationRequest req = new BikeparkReservationRequest(
+                    i,bikePark,r
+            );
+            requests.add(req);
+            i++;
+        }
+
+        return sortedList;
+    }*/
+
+    @Override
+    public List<RezervareBikePark> getAllRezervariBikeparkByBiker(Long id) throws NotValidBikerException {
 
         Biker biker = findBikerById(id);
 
         Set<RezervareBikePark> allRezervariBikepark = biker.getRezervareBikeParks();
         List<RezervareBikePark> sortedList = new ArrayList<>(allRezervariBikepark);
 
+        /*List<BikeparkReservationRequest> requests = new ArrayList<>();
+        Long i = (long)1;
+        for(RezervareBikePark r : sortedList){
+            BikePark bikePark = r.getBikePark();
+            BikeparkReservationRequest req = new BikeparkReservationRequest(
+                    i,bikePark,bikePark.getDenumire(),r
+            );
+            requests.add(req);
+            i++;
+        }*/
+
         return sortedList;
+    }
+
+    @Override
+    public BikePark getBikeparkByIdRezervare(Long id) {
+
+        Optional<RezervareBikePark> rezervareBikePark = rezervareBikeParkRepository.findById(id);
+        RezervareBikePark rez = rezervareBikePark.get();
+
+        BikePark bikePark = rez.getBikePark();
+
+        return bikePark;
+    }
+
+    @Override
+    public Concurs getConcursByIdInscriere(Long id) {
+
+        Optional<RezervareConcurs> rezervareConcurs = rezervareConcursRepository.findById(id);
+        RezervareConcurs rez = rezervareConcurs.get();
+
+        Concurs concurs = rez.getConcurs();
+
+        return concurs;
     }
 
     @Override
@@ -662,13 +717,13 @@ public class GenericServiceImpl implements GenericService {
             }
         });
         List<ConcursReservationRequest> requests = new ArrayList<>();
-        Long i = (long)0;
+        /*Long i = (long)0;
         for(RezervareConcurs r : sortedList){
             ConcursReservationRequest req = new ConcursReservationRequest(
                     i,biker,r
             );
             requests.add(req);
-        }
+        }*/
         return requests;
     }
 
@@ -683,6 +738,16 @@ public class GenericServiceImpl implements GenericService {
 
         Set<RezervareConcurs> allRezervariConcurs = biker.getRezervareConcurs();
         List<RezervareConcurs> sortedList = new ArrayList<>(allRezervariConcurs);
+
+        /*List<ConcursReservationRequest> requests = new ArrayList<>();
+        Long i = (long)1;
+        for(RezervareConcurs r : sortedList){
+            Concurs concurs = r.getConcurs();
+            ConcursReservationRequest req = new ConcursReservationRequest(
+                    i,concurs,r
+            );
+            requests.add(req);
+        }*/
 
         return sortedList;
     }
@@ -967,11 +1032,22 @@ public class GenericServiceImpl implements GenericService {
     public Traseu createTraseu(BikePark bikePark, Traseu traseu) throws NotValidBikeparkException {
         BikePark actualBikepark = findBikeparkById(bikePark.getId());
 
+        //Traseu actualTraseu = new Traseu();
         //traseu.setDificultate(Dificultate.usor);
-        long idNou = traseuRepository.findAll().size() + 1;
-        traseu.setId(idNou);
+        int idNou = traseuRepository.findAll().size() + 1;
+        Long idTraseu = (long)idNou;
+        System.out.println("Traseul cu id " + idTraseu);
+        traseu.setId((long)idNou);
+        /*actualTraseu.setId(idTraseu);
+        actualTraseu.setDificultate(traseu.getDificultate());
+        actualTraseu.setTipTraseu(traseu.getTipTraseu());
+        actualTraseu.setLungime(traseu.getLungime());
+        actualTraseu.setDenumire(traseu.getDenumire());*/
+
         actualBikepark.addTraseu(traseu);
-        return traseuRepository.saveAndFlush(traseu);
+        //TODO nu salva in repository
+        //return traseuRepository.saveAndFlush(traseu);
+        return traseu;
 
     }
 
@@ -988,7 +1064,14 @@ public class GenericServiceImpl implements GenericService {
     public RezervareBikePark createRezervareBikepark(BikePark bikePark, RezervareBikePark rezervareBikePark) throws NotValidBikeparkException, NotValidBikerException {
 
         BikePark actualBikepark = getBikeparkById(bikePark.getId());
-        Biker actualBiker = findBikerById((long)20);
+
+        User user = getAuthenticatedUser();
+        System.out.println(user.getId() + " user rezervare bikepark");
+
+        Biker actualBiker = user.getBiker();
+        System.out.println(actualBiker.getId() + " biker rezervare bikepark");
+
+        //Biker actualBiker = findBikerById((long)20);
         //Rezervarea deja e construita; mai trebuie legata de bikepark si de biker
 
         actualBiker.addRezervareBikeParks(rezervareBikePark);

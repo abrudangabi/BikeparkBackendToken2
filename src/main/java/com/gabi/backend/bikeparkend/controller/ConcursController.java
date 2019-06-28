@@ -51,6 +51,12 @@ public class ConcursController {
         //return new ResponseEntity(userService.getAllBikeParks(), HttpStatus.OK);
     }
 
+    @GetMapping("/inscriere/{id}")
+    ResponseEntity getConcursByIdInscriere(@PathVariable Long id) throws NotValidBikerException {
+        System.out.println("getConcursByIdInscriere : " + id);
+        return new ResponseEntity(userService.getConcursByIdInscriere(id), HttpStatus.OK);
+    }
+
     @GetMapping("{id}/logo")
     public @ResponseBody
     ResponseEntity getConcursLogo(@PathVariable Long id) {
