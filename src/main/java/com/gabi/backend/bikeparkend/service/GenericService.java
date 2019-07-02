@@ -104,11 +104,17 @@ public interface GenericService {
 
     Traseu createTraseu(BikePark bikePark, Traseu traseu) throws NotValidBikeparkException;
 
-    RezervareBikePark createRezervareBikepark(BikePark bikePark, RezervareBikePark rezervareBikePark) throws NotValidBikeparkException, NotValidBikerException;
+    RezervareBikePark createRezervareBikepark(BikePark bikePark, RezervareBikePark rezervareBikePark) throws NotValidBikeparkException, NotValidBikerException, NotAllowedBikerException;
 
     BikePark updateBikepark(Long id, BikePark bikePark) throws NotValidBikeparkException;
 
     Contact updateBikeparkContact(Long id, Contact contact);
+
+    Biker updateBiker(Long id, Biker biker) throws NotValidBikerException;
+
+    Contact updateBikerContact(Long id, Contact contact);
+
+    Locatie updateBikerLocatie(Long id, Locatie locatie);
 
     Concurs updateConcurs(Long id, Concurs concurs);
 

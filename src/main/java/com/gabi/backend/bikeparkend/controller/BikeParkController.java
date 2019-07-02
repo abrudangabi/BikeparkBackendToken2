@@ -4,6 +4,7 @@ import com.gabi.backend.bikeparkend.controller.requests.CreateCategorieConcurs;
 import com.gabi.backend.bikeparkend.controller.requests.CreateConcursBikepark;
 import com.gabi.backend.bikeparkend.controller.requests.CreateRezervareBikepark;
 import com.gabi.backend.bikeparkend.controller.requests.CreateTraseuBikepark;
+import com.gabi.backend.bikeparkend.exceptions.NotAllowedBikerException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikeparkException;
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
 import com.gabi.backend.bikeparkend.model.*;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.GenericEntity;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +113,9 @@ public class BikeParkController {
     }
 
     @PostMapping("/rezervarebikepark/rezerva")
-    public @ResponseBody ResponseEntity addRezervareBikepark(@RequestBody CreateRezervareBikepark createRezervareBikepark) throws NotValidBikeparkException, NotValidBikerException{
+    public @ResponseBody ResponseEntity addRezervareBikepark(@RequestBody CreateRezervareBikepark createRezervareBikepark) throws NotValidBikeparkException, NotValidBikerException, NotAllowedBikerException {
+        LocalDate ziua = createRezervareBikepark.getRezervareBikePark().getZiua().plusDays(1);
+        createRezervareBikepark.getRezervareBikePark().setZiua(ziua);
         System.out.println(createRezervareBikepark.getRezervareBikePark().getZiua());
         RezervareBikePark rezervareBikePark =
                 userService.createRezervareBikepark(

@@ -60,6 +60,10 @@ public class Concurs implements Serializable {
         rezervareConcurs.setConcurs(this);
     }
 
+    public void removeRezervareConcurs(RezervareConcurs rezervareConcurs){
+        this.rezervareConcurs.remove(rezervareConcurs);
+    }
+
 
 
     ///////////////////////

@@ -1,6 +1,9 @@
 package com.gabi.backend.bikeparkend.controller;
 
 import com.gabi.backend.bikeparkend.exceptions.NotValidBikerException;
+import com.gabi.backend.bikeparkend.model.Biker;
+import com.gabi.backend.bikeparkend.model.Contact;
+import com.gabi.backend.bikeparkend.model.Locatie;
 import com.gabi.backend.bikeparkend.service.GenericService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +66,27 @@ public class BikerController {
     public ResponseEntity deleteRezervareConcurs(@PathVariable Long id) {
         System.out.println("Sterge RezervareConcurs : " + id);
         return new ResponseEntity(userService.deleteRezervareConcurs(id),HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/{id}")
+    public @ResponseBody
+    ResponseEntity updateBiker(@PathVariable Long id, @RequestBody Biker biker) throws NotValidBikerException {
+        System.out.println("Face edit in Biker");
+        return new ResponseEntity(userService.updateBiker(id,biker), HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/contact/{id}")
+    public @ResponseBody
+    ResponseEntity updateBikerContact(@PathVariable Long id, @RequestBody Contact contact) {
+        System.out.println("Face edit in contacte la Biker");
+        return new ResponseEntity(userService.updateBikerContact(id,contact), HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/locatie/{id}")
+    public @ResponseBody
+    ResponseEntity updateBikerLocatie(@PathVariable Long id, @RequestBody Locatie locatie) {
+        System.out.println("Face edit in locatie la Biker");
+        return new ResponseEntity(userService.updateBikerLocatie(id,locatie), HttpStatus.OK);
     }
 
     //@PreAuthorize("hasAuthority('APPLICANT')")

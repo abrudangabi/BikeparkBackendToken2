@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class GenericServiceImpl implements GenericService {
 
-    private static final int DEFAULT_LIMIT = 20;
+    private static final int DEFAULT_LIMIT = 50;
 
     /*@Autowired
     private DataSource dataSource;*/
@@ -470,7 +470,7 @@ public class GenericServiceImpl implements GenericService {
     public BikePark getBikeparkById(Long id) throws NotValidBikeparkException {
         Optional<BikePark> bikePark = bikeParkRepository.findById(id);
         if (bikePark.isPresent()) {
-            System.out.println(bikePark.get().toString());
+            //System.out.println(bikePark.get().toString());
             return bikePark.get();
         }
         throw new NotValidBikeparkException("No bikepark with this user ID!");
@@ -540,6 +540,53 @@ public class GenericServiceImpl implements GenericService {
             currentContact.getLocatie().setStrada(contact.getLocatie().getStrada());
         if (contact.getLocatie().getNumber() != null && !currentContact.getLocatie().getNumber().equals(contact.getLocatie().getNumber()))
             currentContact.getLocatie().setNumber(contact.getLocatie().getNumber());
+    }
+
+    private void updateBikerFields(Biker currentBiker, Biker biker){
+        if (biker.getNume() != null && !currentBiker.getNume().equals(biker.getNume()))
+            currentBiker.setNume(biker.getNume());
+        if (biker.getPrenume() != null && !currentBiker.getPrenume().equals(biker.getPrenume()))
+            currentBiker.setPrenume(biker.getPrenume());
+        if (biker.getBicicleta() != null && !currentBiker.getBicicleta().equals(biker.getBicicleta()))
+            currentBiker.setBicicleta(biker.getBicicleta());
+        if (biker.getDisciplinaFavorita() != null && !currentBiker.getDisciplinaFavorita().equals(biker.getDisciplinaFavorita()))
+            currentBiker.setDisciplinaFavorita(biker.getDisciplinaFavorita());
+        if (biker.getMembruData() != null && !currentBiker.getMembruData().equals(biker.getMembruData()))
+            currentBiker.setMembruData(biker.getMembruData());
+        if (biker.getDataNasterii() != null && !currentBiker.getDataNasterii().equals(biker.getDataNasterii()))
+            currentBiker.setMembruData(biker.getDataNasterii());
+        if (biker.getAniExperienta() != null && !currentBiker.getAniExperienta().equals(biker.getAniExperienta()))
+            currentBiker.setAniExperienta(biker.getAniExperienta());
+    }
+
+    private void updateBikerContactFields(Contact currentContact, Contact contact){
+        if (contact.getPhoneNumber() != null && !currentContact.getPhoneNumber().equals(contact.getPhoneNumber()))
+            currentContact.setPhoneNumber(contact.getPhoneNumber());
+        if (contact.getFacebookLink() != null && !currentContact.getFacebookLink().equals(contact.getFacebookLink()))
+            currentContact.setFacebookLink(contact.getFacebookLink());
+        if (contact.getWebsite() != null && !currentContact.getWebsite().equals(contact.getWebsite()))
+            currentContact.setWebsite(contact.getWebsite());
+
+    }
+
+    private void updateBikerLocatieFields(Locatie currentLocatie, Locatie locatie){
+        if (locatie.getTara() != null && !currentLocatie.getTara().equals(locatie.getTara()))
+            currentLocatie.setTara(locatie.getTara());
+        if (locatie.getProvincie() != null && !currentLocatie.getProvincie().equals(locatie.getProvincie()))
+            currentLocatie.setProvincie(locatie.getProvincie());
+        if (locatie.getLocalitate() != null && !currentLocatie.getLocalitate().equals(locatie.getLocalitate()))
+            currentLocatie.setLocalitate(locatie.getLocalitate());
+        if (locatie.getCodPostal() != null && !currentLocatie.getCodPostal().equals(locatie.getCodPostal()))
+            currentLocatie.setCodPostal(locatie.getCodPostal());
+        if (locatie.getStrada() != null && !currentLocatie.getStrada().equals(locatie.getStrada()))
+            currentLocatie.setStrada(locatie.getStrada());
+        if (locatie.getNumber() != null && !currentLocatie.getNumber().equals(locatie.getNumber()))
+            currentLocatie.setNumber(locatie.getNumber());
+        if (locatie.getLatitude() != null && !currentLocatie.getLatitude().equals(locatie.getLatitude()))
+            currentLocatie.setLatitude(locatie.getLatitude());
+        if (locatie.getLongitude() != null && !currentLocatie.getLongitude().equals(locatie.getLongitude()))
+            currentLocatie.setLongitude(locatie.getLongitude());
+
     }
 
     private void updateConcursFields(Concurs currentConcurs, Concurs concurs){
@@ -910,9 +957,16 @@ public class GenericServiceImpl implements GenericService {
             //throw new NotValidApplicantException("Applicant with ID:" + id + " doesn't exist!");
         }
         RezervareConcurs rezervareConcurs = rezervareConcursOptional.get();
-        Optional<Biker> bikerOptional = bikerRepository.findById(rezervareConcurs.getBiker().getId());
+        System.out.println("Rezervare concurs id sters : " + rezervareConcurs.getId());
+        /*Optional<Biker> bikerOptional = bikerRepository.findById(rezervareConcurs.getBiker().getId());
         Biker biker = bikerOptional.get();
-        biker.removeRezervareConcurs(rezervareConcurs);
+        System.out.println("Biker concurs id sters : " + biker.getId());
+        biker.removeRezervareConcurs(rezervareConcurs);*/
+
+        Optional<Concurs> concursOptional = concursRepository.findById(rezervareConcurs.getConcurs().getId());
+        Concurs concurs = concursOptional.get();
+        System.out.println("concurs id sters : " + concurs.getId());
+        concurs.removeRezervareConcurs(rezervareConcurs);
 
         rezervareConcursRepository.delete(rezervareConcurs);
         return rezervareConcurs;
@@ -965,6 +1019,16 @@ public class GenericServiceImpl implements GenericService {
         return contact;
     }
 
+    private Locatie findLocatieById(Long id) {
+        Optional<Locatie> locatieOptional = locatieRepository.findById(id);
+        if (!locatieOptional.isPresent()) {
+            //throw new NotValidCompanyException("Company with ID:" + id + " doesn't exist!");
+        }
+
+        Locatie locatie = locatieOptional.get();
+        return locatie;
+    }
+
     @Override
     public Biker findBikerById(Long id) throws NotValidBikerException {
         Optional<Biker> contactOptional = bikerRepository.findById(id);
@@ -995,6 +1059,14 @@ public class GenericServiceImpl implements GenericService {
         if (!rezervareConcursOptional.isPresent())
             return null;
         return rezervareConcursOptional.get();
+    }
+
+    private List<RezervareBikePark> findRezervareBikeparkByBikerAndBikepark(Biker biker, BikePark bikePark) {
+        /*Optional<RezervareConcurs> rezervareConcursOptional = rezervareConcursRepository.findRezervareConcursByBikerAndConcurs(biker, concurs);
+        if (!rezervareConcursOptional.isPresent())
+            return null;
+        return rezervareConcursOptional.get();*/
+        return rezervareBikeParkRepository.findAllByBikeParkAndAndBiker(bikePark,biker);
     }
 
     @Override
@@ -1061,7 +1133,7 @@ public class GenericServiceImpl implements GenericService {
     }
 
     @Override
-    public RezervareBikePark createRezervareBikepark(BikePark bikePark, RezervareBikePark rezervareBikePark) throws NotValidBikeparkException, NotValidBikerException {
+    public RezervareBikePark createRezervareBikepark(BikePark bikePark, RezervareBikePark rezervareBikePark) throws NotValidBikeparkException, NotValidBikerException, NotAllowedBikerException {
 
         BikePark actualBikepark = getBikeparkById(bikePark.getId());
 
@@ -1071,13 +1143,25 @@ public class GenericServiceImpl implements GenericService {
         Biker actualBiker = user.getBiker();
         System.out.println(actualBiker.getId() + " biker rezervare bikepark");
 
+        /*LocalDate ziua = rezervareBikePark.getZiua().plusDays(1);
+        rezervareBikePark.setZiua(ziua);*/
+
         //Biker actualBiker = findBikerById((long)20);
         //Rezervarea deja e construita; mai trebuie legata de bikepark si de biker
+
+        for(RezervareBikePark r : findRezervareBikeparkByBikerAndBikepark(actualBiker,actualBikepark)){
+            if(r.getZiua().equals(rezervareBikePark.getZiua())){
+                throw new NotAllowedBikerException("You can't apply again for this bikepark!");
+            }
+        }
+        /*if (findRezervareConcurstByBikerAndConcurs(actualBiker, actualConcurs) != null)
+            throw new NotAllowedBikerException("You can't apply again for this concurs!");*/
 
         actualBiker.addRezervareBikeParks(rezervareBikePark);
         actualBikepark.addRezervareBikeParks(rezervareBikePark);
         RezervareBikePark rezervareBikeParkFinal = rezervareBikeParkRepository.saveAndFlush(rezervareBikePark);
 
+        //TODO MEGA IMPORTANT
         modificaPreferinte(actualBiker, actualBikepark);
 
         //TODO CALCULARE PREFERINTA PT BIKER
@@ -1257,6 +1341,18 @@ public class GenericServiceImpl implements GenericService {
         List<BikePark> bikeParks = new ArrayList<>();
         bikeParks = getBikeparkRecomandate(recomandaLista(biker.getId()));
         System.out.println("Lungime bikepark recomandate " + bikeParks.size());
+        //int count = 0;
+
+        for(BikePark b : bikeParkRepository.findAll()){
+            if(!bikeParks.contains(b)){
+                bikeParks.add(b);
+            }
+            /*else {
+                count++;
+            }*/
+        }
+        //System.out.println("Cate nu a gasit " + count);
+        System.out.println("Cate sunt in total " + bikeParks.size());
 
         return bikeParks;
     }
@@ -1279,6 +1375,36 @@ public class GenericServiceImpl implements GenericService {
         updateBikeparkContactFields(currentContact, contact);
 
         return contactRepository.save(currentContact);
+    }
+
+    @Override
+    public Biker updateBiker(Long id, Biker biker) throws NotValidBikerException {
+
+        Biker currentBiker = findBikerById(id);
+
+        updateBikerFields(currentBiker, biker);
+
+        return bikerRepository.save(currentBiker);
+    }
+
+    @Override
+    public Contact updateBikerContact(Long id, Contact contact) {
+
+        Contact currentContact = findContactById(id);
+
+        updateBikerContactFields(currentContact, contact);
+
+        return contactRepository.save(currentContact);
+    }
+
+    @Override
+    public Locatie updateBikerLocatie(Long id, Locatie locatie) {
+
+        Locatie currentLocatie = findLocatieById(id);
+
+        updateBikerLocatieFields(currentLocatie, locatie);
+
+        return locatieRepository.save(currentLocatie);
     }
 
     @Override
